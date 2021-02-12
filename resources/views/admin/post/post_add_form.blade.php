@@ -63,12 +63,18 @@
                           <div class="md-form">
                             <label >Content</label>
                             <textarea type="text" name="content" class="md-textarea form-control" rows="3" ></textarea>
+                          </div><br>
+                          <div class="form-group-file">
+                            <input type="file" accept="image/*" id="file-upload" class="form-control" name="file" style="display: none;" onchange="previewFile(this)">
+                            <p onclick="document.querySelector('#file-upload').click()">
+                                Drag & drop to upload image
+                            </p>
+
                           </div>
-                          <div class="form-group">
-                            <label for="exampleInputName">Feature Image</label>
-                            <input type="file" accept="image/*" class="form-control" name="file" style="display: none;">
-                            <p>Drag & drop to upload image</p>
-                          </div>
+                        <div id="previewBox" style="display: none;">
+                            <img src="" id="previewImg" alt="" width="40%" height="50%">
+                            <i class="fas fa-trash-alt nav-icon" style="cursor: pointer;" onclick="previewRemove()">Delete</i>
+                        </div>
                         <div class="card-footer">
                             <button type="submit" name="status" class="btn btn-primary" value="unpublish">Save Post</button>
                             <button type="submit" name="status" class="btn btn-success" value="publish">Publish Post</button>
@@ -89,6 +95,24 @@
 
 @endsection
 
+@section('style')
+  <style>
+      .form-group-file{
+          width: 100%;
+          height: 150px;
+          border: 1px dashed !important;
+          margin-bottom: 10px;
+      }
+      .form-group-file{
+          width: 100%;
+          height: 100%;
+          text-align: center;
+          line-height: 178px;
+      }
+
+  </style>
+@endsection
+
 @section('script')
     <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
     <script>
@@ -96,4 +120,27 @@
             filebrowserUploadUrl:'{{ route('post.content_file',['_token'=>csrf_token()]) }}',
             filebrowserUploadMethod:'form',
         });
-    
+
+        function previewFile(input)
+        {
+            let file = $("input[type=file]").get(0).files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(){
+                    $('#previewImg').attr('src',reader.result);
+                    $('#previewBox').css('display','block');
+                }
+                $('.form-group-file').css('display','none');
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function previewRemove(input)
+        {
+            $('#previewImg').attr('src','');
+            $('#previewBox').css('display','none');
+            $('.form-group-file').css('display','block');
+        }
+    </script>
+@endsection
+

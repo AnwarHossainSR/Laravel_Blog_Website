@@ -22,6 +22,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="{{ asset('source/back') }}/dist/css/adminlte.min.css">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  @yield('style')
 </head>
     <body class="hold-transition sidebar-mini">
     <div class="wrapper">
@@ -72,13 +73,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Main Footer -->
     <footer class="main-footer">
         <!-- Default to the left -->
-        <strong>Copyright &copy; 2021>Mahedi Hasan</strong> All rights reserved.
+        <strong>Copyright &copy; 2021 Mahedi Hasan</strong> All rights reserved.
     </footer>
     </div>
     <!-- ./wrapper -->
 
     <!-- REQUIRED SCRIPTS -->
-    @yield('script')
+
 
     <!-- jQuery -->
     <script src="{{ asset('source/back') }}/plugins/jquery/jquery.min.js"></script>
@@ -92,6 +93,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="{{ asset('source/back') }}/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
     <script src="{{ asset('source/back') }}/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
     <!-- page script -->
+    @yield('script')
     <script>
         $(function () {
           $("#example1").DataTable({
