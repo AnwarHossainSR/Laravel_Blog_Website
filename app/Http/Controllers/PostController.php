@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Category;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 
 class PostController extends Controller
@@ -53,6 +54,12 @@ class PostController extends Controller
             'category_id'=>$request->category_id,
             'admin_id'=>Auth()->guard('admin')->id(),
         ]);
+
+        if ($request->hasFile('feature_image')) {
+            $post->addMedia($request->feature_image)
+                ->toMediaCollection('feature_image');
+
+        }
         return redirect()->route('post.index')->with('success','Post created successfully');
     }
 
@@ -73,9 +80,10 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Post $post)
     {
-        //
+        $categories = Category::where('status',1)->get();
+        return view('admin.post.post_edit',compact('categories','post'));
     }
 
     /**
@@ -85,9 +93,23 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Post $post)
     {
-        //
+        $post->update([
+            'title'=>$request->input('title',$post->title),
+            'excerpt'=>$request->input('excerpt',$post->excerp),
+            'content'=>$request->input('content',$post->content),
+            'status'=>$request->input('status',$post->status),
+            'category_id'=>$request->input('category_id',$post->category_id),
+            'admin_id'=>Auth()->guard('admin')->id(),
+        ]);
+
+        if ($request->hasFile('feature_image')) {
+            $post->media()->delete();
+            $post->addMedia($request->feature_image)
+                ->toMediaCollection('feature_image');
+        }
+        return redirect()->route('post.index')->with('success','Post updated successfully');
     }
 
     /**
@@ -98,7 +120,8 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+       Post::destroy($id);
+       return back()->with('success','Post deleted successfully');
     }
 
     public function hide($id)

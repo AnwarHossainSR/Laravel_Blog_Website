@@ -47,7 +47,7 @@
                   <th>#</th>
                   <th>Title</th>
                   <th>Slug</th>
-                  <th>Excerpt</th>Excerpt
+                  <th>Excerpt</th>
                   <th>Status</th>
                   <th>Action</th>
                 </tr>
@@ -68,7 +68,7 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('post.destroy',$post->id) }}" title="Delete" class="btn text-danger">
+                                <a href="{{ route('post.delete',$post->id) }}" title="Delete" class="btn text-danger">
                                     <i class="fas fa-trash nav-icon"></i>
                                 </a>
                                 <a href="{{ route('post.edit',$post->id) }}" title="Edit" class="btn text-success">

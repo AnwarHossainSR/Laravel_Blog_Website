@@ -43,6 +43,7 @@ Route::group(['middleware' => ['admin']], function () {
 
     Route::group(['prefix' => 'post'], function () {
         Route::resource('post', PostController::class);
+        Route::get('/destroy/{id}',[PostController::class,'destroy'])->name('post.delete');
         Route::get('/publish/{id}',[PostController::class,'publish'])->name('post.publish');
         Route::get('/hide/{id}',[PostController::class,'hide'])->name('post.hide');
         Route::post('/content/file',[PostController::class,'fileUpload'])->name('post.content_file');

@@ -1,6 +1,6 @@
 @extends('admin.master')
 @section('title')
-    Admin || Post
+    Admin || Edit
 @endsection
 
 @section('content')
@@ -10,7 +10,7 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>Post Generate</h1>
+          <h1>Post {{ $post->title }}</h1>
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
@@ -36,33 +36,35 @@
 
                     <!-- /.card-header -->
                     <!-- form start -->
-                    <form action="{{ route('post.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('post.update',[$post->id]) }}" method="POST" enctype="multipart/form-data">
                         @csrf
+                        @method('put')
                       <div class="card-body">
                         <div class="form-group">
                           <label for="exampleInputName">Title</label>
-                          <input type="text" class="form-control" name="title" id="exampleInputName" placeholder="Write a title ">
+                          <input type="text" class="form-control" name="title" id="exampleInputName" value="{{ $post->title }}" placeholder="Write a title ">
                         </div>
                         <div class="form-group">
                             <label for="exampleInputName">Excerpt</label>
-                            <input type="text" class="form-control" name="excerpt" id="exampleInputName" placeholder="Write an excerpt">
+                            <input type="text" class="form-control" name="excerpt" id="exampleInputName" value="{{ $post->excerpt }}" placeholder="Write an excerpt">
                           </div>
                           <div class="form-group">
                             <label class="mr-sm-2" for="inlineFormCustomSelect">Category</label>
                             <select class="custom-select " name="category_id">
-                                <option value="0" selected>Select a category</option>
-                                @forelse($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+
+                                @forelse($categories as $cat)
+                                <option value="{{ $cat->id }}"
+                                    @if ($post->category_id == $cat->id) selected
+                                    @endif >
+                                    {{ $cat->name }}
+                                </option>
                                 @empty
                                 @endforelse
-                              @foreach($categories as $key => $category)
-
-                              @endforeach
                             </select>
                           </div>
                           <div class="md-form">
                             <label >Content</label>
-                            <textarea type="text" name="content" class="md-textarea form-control" rows="3" ></textarea>
+                            <textarea type="text" name="content" class="md-textarea form-control" rows="3" >{{ $post->content }}</textarea>
                           </div><br>
                           <div class="form-group-file">
                             <input type="file" name="feature_image" accept="image/*" id="file-upload" class="form-control" name="file" style="display: none;" onchange="previewFile(this)">
@@ -72,12 +74,17 @@
 
                           </div>
                         <div id="previewBox" style="display: none;">
-                            <img src="" id="previewImg" alt="" width="40%" height="50%">
+                            <img src="{{ $post->url }}" id="previewImg" alt="" width="40%" height="50%">
                             <i class="fas fa-trash-alt nav-icon" style="cursor: pointer;" onclick="previewRemove()">Delete</i>
                         </div>
                         <div class="card-footer">
-                            <button type="submit" name="status" class="btn btn-primary" value="unpublish">Save Post</button>
-                            <button type="submit" name="status" class="btn btn-success" value="publish">Publish Post</button>
+                            @if($post->status == 'Unpublish')
+                                <button type="submit" name="status" class="btn btn-primary" value="unpublish">Save Post</button>
+                            @elseif($post->status == 'Publish')
+                                <button type="submit" name="status" class="btn btn-success" value="publish">Update Post</button>
+                            @else
+                                <button type="submit" name="status" class="btn btn-success" value="publish">Update Post</button>
+                            @endif
                           </div>
                       </form>
                     </div>
@@ -119,6 +126,14 @@
          CKEDITOR.replace('content',{
             filebrowserUploadUrl:'{{ route('post.content_file',['_token'=>csrf_token()]) }}',
             filebrowserUploadMethod:'form',
+        });
+
+        $(document).ready(function () {
+            let url =  "{{ $post->url }}";
+            if (url != null) {
+                $('#previewBox').css('display','block');
+                $('.form-group-file').css('display','none');
+            }
         });
 
         function previewFile(input)
